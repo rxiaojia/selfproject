@@ -1,0 +1,1452 @@
+
+---
+title: "SELF"
+format: pdf
+---
+September Update: picked new controls for modeling, produced and analyzed regression results and finished last regression needed.
+
+## 2012
+```{r warning=F, message=FALSE, echo=F}
+setwd("/Users/renxiaojia/Desktop/PSU-PAES")
+library(readr)
+ADM2012 <- read_delim("ADM2012.csv", delim = ";", 
+    escape_double = FALSE, trim_ws = TRUE)
+
+#Renaming gender
+ADM2012$P009 <- factor(ADM2012$P009, levels = c(1, 2), 
+                       labels = c("Male", "Female"))
+
+clean_data2012 <- ADM2012[!is.na(ADM2012$P009), ]
+
+# gpa high school, score, by gender//descriptive statistics
+summary_by_gender_P083 <- tapply(ADM2012$P083, ADM2012$P009, summary)
+summary_by_gender_P083
+
+# gpa high school, by gender//descriptive statistics
+summary_by_gender_P082 <- tapply(ADM2012$P082, ADM2012$P009, summary)
+summary_by_gender_P082
+
+# Histograms by gender
+## histogram of high school GPA score by gender
+clean_data2012$P083 <- as.numeric(clean_data2012$P083)
+clean_data2012 <- clean_data2012[!is.na(clean_data2012$P083), ]
+
+male_data2012 <- subset(clean_data2012, P009 == "Male")
+female_data2012 <- subset(clean_data2012, P009 == "Female")
+
+xlim_range <- range(clean_data2012$P083, na.rm = TRUE)
+ylim_range <- range(0, hist(male_data2012$P083, plot = FALSE)$counts, hist(female_data2012$P083, plot = FALSE)$counts)
+
+par(mfrow=c(1,2))
+
+hist(male_data2012$P083, main="HS GPA score(Male)", 
+     xlab="GPA High School score", col="lightblue", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+
+hist(female_data2012$P083, main="HS GPA score(Female)", 
+     xlab="GPA High School score", col="pink", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+par(mfrow=c(1,1)) 
+
+##histogram of gpa high school by gender
+
+
+clean_data2012$P082 <- as.numeric(clean_data2012$P082)
+clean_data2012 <- clean_data2012[!is.na(clean_data2012$P082), ]
+
+
+xlim_range <- range(clean_data2012$P082, na.rm = TRUE)
+ylim_range <- range(0, hist(male_data2012$P082, plot = FALSE)$counts, hist(female_data2012$P082, plot = FALSE)$counts)
+
+par(mfrow=c(1,2))
+
+hist(male_data2012$P082, main="HS GPA (Female)", 
+     xlab="GPA High School", col="pink", xlim=xlim_range, ylim=ylim_range,
+     breaks=20)
+
+
+hist(female_data2012$P082, main="HS GPA (Male)", 
+     xlab="GPA High School", col="lightblue", xlim=xlim_range, ylim=ylim_range,
+     breaks=20)
+
+par(mfrow=c(1,1)) 
+
+# Boxplot for spread and outliers
+boxplot(ADM2012$P083, main="Boxplot of gpa high school, score")
+
+boxplot(ADM2012$P082, main="Boxplot of gpa high school")
+
+
+library(ggplot2)
+
+plot2012 <- ggplot(clean_data2012, aes(x = P009, y = P083)) +
+  geom_jitter(alpha = 0.5, width = 0.2, aes(color = P009)) +  
+  geom_boxplot(width = 0.5, outlier.shape = NA, alpha = 0.7, aes(fill = P009),
+               color = "gray") +  
+  stat_summary(fun.y = median, geom = "point", shape = 23, size = 3, 
+               fill = "yellow", aes(group = P009)) +  
+  labs(title = "Scatter Plot of Scores by Gender with Boxplot 2012", 
+       x = "Gender", y = "Score") +
+  theme_minimal() +
+  scale_color_manual(values = c("lightblue","pink")) + 
+  scale_fill_manual(values = c("gray","beige" ))  
+
+print(plot2012)
+
+
+
+```
+## 2013
+```{r warning=F, message=FALSE, echo=F}
+setwd("/Users/renxiaojia/Desktop/PSU-PAES")
+library(readr)
+ADM2013 <- read_delim("ADM2013.csv", delim = ";", 
+    escape_double = FALSE, trim_ws = TRUE)
+
+#Renaming gender
+ADM2013$P009 <- factor(ADM2013$P009, levels = c(1, 2), 
+                       labels = c("Male", "Female"))
+
+clean_data2013 <- ADM2013[!is.na(ADM2013$P009), ]
+
+# gpa high school, score, by gender//descriptive statistics
+summary_by_gender_P083 <- tapply(ADM2013$P083, ADM2013$P009, summary)
+summary_by_gender_P083
+
+# gpa high school, by gender//descriptive statistics
+summary_by_gender_P082 <- tapply(ADM2013$P082, ADM2013$P009, summary)
+summary_by_gender_P082
+
+# Histograms by gender
+## histogram of high school GPA score by gender
+clean_data2013$P083 <- as.numeric(clean_data2013$P083)
+clean_data2013 <- clean_data2013[!is.na(clean_data2013$P083), ]
+
+male_data2013 <- subset(clean_data2013, P009 == "Male")
+female_data2013 <- subset(clean_data2013, P009 == "Female")
+
+xlim_range <- range(clean_data2013$P083, na.rm = TRUE)
+ylim_range <- range(0, hist(male_data2013$P083, plot = FALSE)$counts, hist(female_data2013$P083, plot = FALSE)$counts)
+
+par(mfrow=c(1,2))
+
+hist(male_data2013$P083, main="HS GPA score(Male)", 
+     xlab="GPA High School score", col="lightblue", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+
+hist(female_data2013$P083, main="HS GPA score(Female)", 
+     xlab="GPA High School score", col="pink", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+par(mfrow=c(1,1)) 
+
+##histogram of gpa high school by gender
+
+
+clean_data2013$P082 <- as.numeric(clean_data2013$P082)
+clean_data2013 <- clean_data2013[!is.na(clean_data2013$P082), ]
+
+
+xlim_range <- range(clean_data2013$P082, na.rm = TRUE)
+ylim_range <- range(0, hist(male_data2013$P082, plot = FALSE)$counts, hist(female_data2013$P082, plot = FALSE)$counts)
+
+par(mfrow=c(1,2))
+
+hist(male_data2013$P082, main="HS GPA (Female)", 
+     xlab="GPA High School", col="pink", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+
+hist(female_data2013$P082, main="HS GPA (Male)", 
+     xlab="GPA High School", col="lightblue", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+par(mfrow=c(1,1)) 
+
+# Boxplot for spread and outliers
+boxplot(ADM2013$P083, main="Boxplot of gpa high school, score")
+
+boxplot(ADM2013$P082, main="Boxplot of gpa high school")
+
+
+library(ggplot2)
+
+plot2013 <- ggplot(clean_data2013, aes(x = P009, y = P083)) +
+  geom_jitter(alpha = 0.5, width = 0.2, aes(color = P009)) +  
+  geom_boxplot(width = 0.5, outlier.shape = NA, alpha = 0.7, aes(fill = P009),
+               color = "gray") +  
+  stat_summary(fun.y = median, geom = "point", shape = 23, size = 3, 
+               fill = "yellow", aes(group = P009)) +  
+  labs(title = "Scatter Plot of Scores by Gender with Boxplot 2013", 
+       x = "Gender", y = "Score") +
+  theme_minimal() +
+  scale_color_manual(values = c("lightblue","pink")) + 
+  scale_fill_manual(values = c("gray","beige" ))  
+
+print(plot2013)
+
+
+
+```
+## 2014
+```{r warning=F, message=FALSE, echo=F}
+setwd("/Users/renxiaojia/Desktop/PSU-PAES")
+library(readr)
+ADM2014 <- read_delim("ADM2014.csv", delim = ";", 
+    escape_double = FALSE, trim_ws = TRUE)
+
+#Renaming gender
+ADM2014$P009 <- factor(ADM2014$P009, levels = c(1, 2), 
+                       labels = c("Male", "Female"))
+
+clean_data2014 <- ADM2014[!is.na(ADM2014$P009), ]
+
+# gpa high school, score, by gender//descriptive statistics
+summary_by_gender_P083 <- tapply(ADM2014$P083, ADM2014$P009, summary)
+summary_by_gender_P083
+
+# gpa high school, by gender//descriptive statistics
+summary_by_gender_P082 <- tapply(ADM2014$P082, ADM2014$P009, summary)
+summary_by_gender_P082
+
+# Histograms by gender
+## histogram of high school GPA score by gender
+clean_data2014$P083 <- as.numeric(clean_data2014$P083)
+clean_data2014 <- clean_data2014[!is.na(clean_data2014$P083), ]
+
+male_data2014 <- subset(clean_data2014, P009 == "Male")
+female_data2014 <- subset(clean_data2014, P009 == "Female")
+
+xlim_range <- range(clean_data2014$P083, na.rm = TRUE)
+ylim_range <- range(0, hist(male_data2014$P083, plot = FALSE)$counts, hist(female_data2014$P083, plot = FALSE)$counts)
+
+par(mfrow=c(1,2))
+
+hist(male_data2014$P083, main="HS GPA score(Male)", 
+     xlab="GPA High School score", col="lightblue", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+
+hist(female_data2014$P083, main="HS GPA score(Female)", 
+     xlab="GPA High School score", col="pink", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+par(mfrow=c(1,1)) 
+
+##histogram of gpa high school by gender
+
+
+clean_data2014$P082 <- as.numeric(clean_data2014$P082)
+clean_data2014 <- clean_data2014[!is.na(clean_data2014$P082), ]
+
+
+xlim_range <- range(clean_data2014$P082, na.rm = TRUE)
+ylim_range <- range(0, hist(male_data2014$P082, plot = FALSE)$counts, hist(female_data2014$P082, plot = FALSE)$counts)
+
+par(mfrow=c(1,2))
+
+hist(male_data2014$P082, main="HS GPA (Female)", 
+     xlab="GPA High School", col="pink", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+
+hist(female_data2014$P082, main="HS GPA (Male)", 
+     xlab="GPA High School", col="lightblue", xlim=xlim_range,
+     ylim=ylim_range, breaks=20)
+
+par(mfrow=c(1,1)) 
+
+# Boxplot for spread and outliers
+boxplot(ADM2014$P083, main="Boxplot of gpa high school, score")
+
+boxplot(ADM2014$P082, main="Boxplot of gpa high school")
+
+
+library(ggplot2)
+
+plot2014 <- ggplot(clean_data2014, aes(x = P009, y = P083)) +
+  geom_jitter(alpha = 0.5, width = 0.2, aes(color = P009)) +  
+  geom_boxplot(width = 0.5, outlier.shape = NA, alpha = 0.7, aes(fill = P009),
+               color = "gray") +  
+  stat_summary(fun.y = median, geom = "point", shape = 23, size = 3, 
+               fill = "yellow", aes(group = P009)) +  
+  labs(title = "Scatter Plot of Scores by Gender with Boxplot 2014", 
+       x = "Gender", y = "Score") +
+  theme_minimal() +
+  scale_color_manual(values = c("lightblue","pink")) + 
+  scale_fill_manual(values = c("gray","beige" ))  
+
+print(plot2014)
+
+
+
+```
+
+## 2015
+```{r warning=F, message=FALSE, echo=F}
+setwd("/Users/renxiaojia/Desktop/PSU-PAES")
+library(readr)
+ADM2015 <- read_delim("ADM2015.csv", delim = ";", 
+    escape_double = FALSE, trim_ws = TRUE)
+
+#Renaming gender
+ADM2015$P009 <- factor(ADM2015$P009, levels = c(1, 2), 
+                       labels = c("Male", "Female"))
+
+clean_data2015 <- ADM2015[!is.na(ADM2015$P009), ]
+
+# gpa high school, score, by gender//descriptive statistics
+summary_by_gender_P083 <- tapply(ADM2015$P083, ADM2015$P009, summary)
+summary_by_gender_P083
+
+# gpa high school, by gender//descriptive statistics
+summary_by_gender_P082 <- tapply(ADM2015$P082, ADM2015$P009, summary)
+summary_by_gender_P082
+
+# Histograms by gender
+## histogram of high school GPA score by gender
+clean_data2015$P083 <- as.numeric(clean_data2015$P083)
+clean_data2015 <- clean_data2015[!is.na(clean_data2015$P083), ]
+
+male_data2015 <- subset(clean_data2015, P009 == "Male")
+female_data2015 <- subset(clean_data2015, P009 == "Female")
+
+xlim_range <- range(clean_data2015$P083, na.rm = TRUE)
+ylim_range <- range(0, hist(male_data2015$P083, plot = FALSE)$counts, hist(female_data2015$P083, plot = FALSE)$counts)
+
+par(mfrow=c(1,2))
+
+hist(male_data2015$P083, main="HS GPA score(Male)", 
+     xlab="GPA High School score", col="lightblue", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+
+hist(female_data2015$P083, main="HS GPA score(Female)", 
+     xlab="GPA High School score", col="pink", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+par(mfrow=c(1,1)) 
+
+##histogram of gpa high school by gender
+
+
+clean_data2015$P082 <- as.numeric(clean_data2015$P082)
+clean_data2015 <- clean_data2015[!is.na(clean_data2015$P082), ]
+
+
+xlim_range <- range(clean_data2015$P082, na.rm = TRUE)
+ylim_range <- range(0, hist(male_data2015$P082, plot = FALSE)$counts, hist(female_data2015$P082, plot = FALSE)$counts)
+
+par(mfrow=c(1,2))
+
+hist(male_data2015$P082, main="HS GPA (Female)", 
+     xlab="GPA High School", col="pink", xlim=xlim_range, ylim=ylim_range, 
+     breaks=20)
+
+
+hist(female_data2015$P082, main="HS GPA (Male)", 
+     xlab="GPA High School", col="lightblue", xlim=xlim_range, ylim=ylim_range,
+     breaks=20)
+
+par(mfrow=c(1,1)) 
+
+# Boxplot for spread and outliers
+boxplot(ADM2015$P083, main="Boxplot of gpa high school, score")
+
+boxplot(ADM2015$P082, main="Boxplot of gpa high school")
+
+
+library(ggplot2)
+
+plot2015 <- ggplot(clean_data2015, aes(x = P009, y = P083)) +
+  geom_jitter(alpha = 0.5, width = 0.2, aes(color = P009)) +  
+  geom_boxplot(width = 0.5, outlier.shape = NA, alpha = 0.7, aes(fill = P009),
+               color = "gray") +  
+  stat_summary(fun.y = median, geom = "point", shape = 23, size = 3, 
+               fill = "yellow", aes(group = P009)) +  
+  labs(title = "Scatter Plot of Scores by Gender with Boxplot 2015", 
+       x = "Gender", y = "Score") +
+  theme_minimal() +
+  scale_color_manual(values = c("lightblue","pink")) + 
+  scale_fill_manual(values = c("gray","beige" ))  
+
+print(plot2015)
+
+
+
+```
+
+## 2016
+```{r warning=F, message=FALSE, echo=F}
+setwd("/Users/renxiaojia/Desktop/PSU-PAES")
+library(readr)
+ADM2016 <- read_delim("ADM2016.csv", delim = ";", 
+    escape_double = FALSE, trim_ws = TRUE)
+
+#Renaming gender
+ADM2016$P009 <- factor(ADM2016$P009, levels = c(1, 2), 
+                       labels = c("Male", "Female"))
+
+clean_data2016 <- ADM2016[!is.na(ADM2016$P009), ]
+
+# gpa high school, score, by gender//descriptive statistics
+summary_by_gender_P083 <- tapply(ADM2016$P083, ADM2016$P009, summary)
+summary_by_gender_P083
+
+# gpa high school, by gender//descriptive statistics
+summary_by_gender_P082 <- tapply(ADM2016$P082, ADM2016$P009, summary)
+summary_by_gender_P082
+
+# Histograms by gender
+## histogram of high school GPA score by gender
+clean_data2016$P083 <- as.numeric(clean_data2016$P083)
+clean_data2016 <- clean_data2016[!is.na(clean_data2016$P083), ]
+
+male_data2016 <- subset(clean_data2016, P009 == "Male")
+female_data2016 <- subset(clean_data2016, P009 == "Female")
+
+xlim_range <- range(clean_data2016$P083, na.rm = TRUE)
+ylim_range <- range(0, hist(male_data2016$P083, plot = FALSE)$counts, hist(female_data2016$P083, plot = FALSE)$counts)
+
+par(mfrow=c(1,2))
+
+hist(male_data2016$P083, main="HS GPA score(Male)", 
+     xlab="GPA High School score", col="lightblue", xlim=xlim_range,
+     ylim=ylim_range, breaks=20)
+
+
+hist(female_data2016$P083, main="HS GPA score(Female)", 
+     xlab="GPA High School score", col="pink", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+par(mfrow=c(1,1)) 
+
+##histogram of gpa high school by gender
+
+
+clean_data2016$P082 <- as.numeric(clean_data2016$P082)
+clean_data2016 <- clean_data2016[!is.na(clean_data2016$P082), ]
+
+
+xlim_range <- range(clean_data2016$P082, na.rm = TRUE)
+ylim_range <- range(0, hist(male_data2016$P082, plot = FALSE)$counts, hist(female_data2016$P082, plot = FALSE)$counts)
+
+par(mfrow=c(1,2))
+
+hist(male_data2016$P082, main="HS GPA (Female)", 
+     xlab="GPA High School", col="pink", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+
+hist(female_data2016$P082, main="HS GPA (Male)", 
+     xlab="GPA High School", col="lightblue", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+par(mfrow=c(1,1)) 
+
+# Boxplot for spread and outliers
+boxplot(ADM2016$P083, main="Boxplot of gpa high school, score")
+
+boxplot(ADM2016$P082, main="Boxplot of gpa high school")
+
+
+library(ggplot2)
+
+plot2016 <- ggplot(clean_data2016, aes(x = P009, y = P083)) +
+  geom_jitter(alpha = 0.5, width = 0.2, aes(color = P009)) +  
+  geom_boxplot(width = 0.5, outlier.shape = NA, alpha = 0.7, aes(fill = P009),
+               color = "gray") +  
+  stat_summary(fun.y = median, geom = "point", shape = 23, size = 3, 
+               fill = "yellow", aes(group = P009)) +  
+  labs(title = "Scatter Plot of Scores by Gender with Boxplot 2016", 
+       x = "Gender", y = "Score") +
+  theme_minimal() +
+  scale_color_manual(values = c("lightblue","pink")) + 
+  scale_fill_manual(values = c("gray","beige" ))  
+
+print(plot2016)
+
+
+
+```
+## 2017
+```{r warning=F, message=FALSE, echo=F}
+setwd("/Users/renxiaojia/Desktop/PSU-PAES")
+library(readr)
+ADM2017 <- read_delim("ADM2017.csv", delim = ";", 
+    escape_double = FALSE, trim_ws = TRUE)
+
+#Renaming gender
+ADM2017$P009 <- factor(ADM2017$P009, levels = c(1, 2), 
+                       labels = c("Male", "Female"))
+
+clean_data2017 <- ADM2017[!is.na(ADM2017$P009), ]
+
+# gpa high school, score, by gender//descriptive statistics
+summary_by_gender_P083 <- tapply(ADM2017$P083, ADM2017$P009, summary)
+summary_by_gender_P083
+
+# gpa high school, by gender//descriptive statistics
+summary_by_gender_P082 <- tapply(ADM2017$P082, ADM2017$P009, summary)
+summary_by_gender_P082
+
+# Histograms by gender
+## histogram of high school GPA score by gender
+clean_data2017$P083 <- as.numeric(clean_data2017$P083)
+clean_data2017 <- clean_data2017[!is.na(clean_data2017$P083), ]
+
+male_data2017 <- subset(clean_data2017, P009 == "Male")
+female_data2017 <- subset(clean_data2017, P009 == "Female")
+
+xlim_range <- range(clean_data2017$P083, na.rm = TRUE)
+ylim_range <- range(0, hist(male_data2017$P083, plot = FALSE)$counts, hist(female_data2017$P083, plot = FALSE)$counts)
+
+par(mfrow=c(1,2))
+
+hist(male_data2017$P083, main="HS GPA score(Male)", 
+     xlab="GPA High School score", col="lightblue", xlim=xlim_range,
+     ylim=ylim_range, breaks=20)
+
+
+hist(female_data2017$P083, main="HS GPA score(Female)", 
+     xlab="GPA High School score", col="pink", xlim=xlim_range,
+     ylim=ylim_range, breaks=20)
+
+par(mfrow=c(1,1)) 
+
+##histogram of gpa high school by gender
+
+
+clean_data2017$P082 <- as.numeric(clean_data2017$P082)
+clean_data2017 <- clean_data2017[!is.na(clean_data2017$P082), ]
+
+
+xlim_range <- range(clean_data2017$P082, na.rm = TRUE)
+ylim_range <- range(0, hist(male_data2017$P082, plot = FALSE)$counts, hist(female_data2017$P082, plot = FALSE)$counts)
+
+par(mfrow=c(1,2))
+
+hist(male_data2017$P082, main="HS GPA (Female)", 
+     xlab="GPA High School", col="pink", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+
+hist(female_data2017$P082, main="HS GPA (Male)", 
+     xlab="GPA High School", col="lightblue", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+par(mfrow=c(1,1)) 
+
+# Boxplot for spread and outliers
+boxplot(ADM2017$P083, main="Boxplot of gpa high school, score")
+
+boxplot(ADM2017$P082, main="Boxplot of gpa high school")
+
+
+library(ggplot2)
+
+plot2017 <- ggplot(clean_data2017, aes(x = P009, y = P083)) +
+  geom_jitter(alpha = 0.5, width = 0.2, aes(color = P009)) +  
+  geom_boxplot(width = 0.5, outlier.shape = NA, alpha = 0.7, aes(fill = P009),
+               color = "gray") +  
+  stat_summary(fun.y = median, geom = "point", shape = 23, size = 3, 
+               fill = "yellow", aes(group = P009)) +  
+  labs(title = "Scatter Plot of Scores by Gender with Boxplot 2017", 
+       x = "Gender", y = "Score") +
+  theme_minimal() +
+  scale_color_manual(values = c("lightblue","pink")) + 
+  scale_fill_manual(values = c("gray","beige" ))  
+
+print(plot2017)
+
+
+
+```
+## 2018
+```{r warning=F, message=FALSE,, echo=F }
+setwd("/Users/renxiaojia/Desktop/PSU-PAES")
+library(readr)
+ADM2018 <- read_delim("ADM2018.csv", delim = ";", 
+    escape_double = FALSE, trim_ws = TRUE)
+
+#Renaming gender
+ADM2018$P009 <- factor(ADM2018$P009, levels = c(1, 2), 
+                       labels = c("Male", "Female"))
+
+clean_data2018 <- ADM2018[!is.na(ADM2018$P009), ]
+
+# gpa high school, score, by gender//descriptive statistics
+summary_by_gender_P083 <- tapply(ADM2018$P083, ADM2018$P009, summary)
+summary_by_gender_P083
+
+# gpa high school, by gender//descriptive statistics
+summary_by_gender_P082 <- tapply(ADM2018$P082, ADM2018$P009, summary)
+summary_by_gender_P082
+
+# Histograms by gender
+## histogram of high school GPA score by gender
+clean_data2018$P083 <- as.numeric(clean_data2018$P083)
+clean_data2018 <- clean_data2018[!is.na(clean_data2018$P083), ]
+
+male_data2018 <- subset(clean_data2018, P009 == "Male")
+female_data2018 <- subset(clean_data2018, P009 == "Female")
+
+xlim_range <- range(clean_data2018$P083, na.rm = TRUE)
+ylim_range <- range(0, hist(male_data2018$P083, plot = FALSE)$counts, hist(female_data2018$P083, plot = FALSE)$counts)
+
+par(mfrow=c(1,2))
+
+hist(male_data2018$P083, main="HS GPA score(Male)", 
+     xlab="GPA High School score", col="lightblue", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+
+hist(female_data2018$P083, main="HS GPA score(Female)", 
+     xlab="GPA High School score", col="pink", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+par(mfrow=c(1,1)) 
+
+##histogram of gpa high school by gender
+
+
+clean_data2018$P082 <- as.numeric(clean_data2018$P082)
+clean_data2018 <- clean_data2018[!is.na(clean_data2018$P082), ]
+
+
+xlim_range <- range(clean_data2018$P082, na.rm = TRUE)
+ylim_range <- range(0, hist(male_data2018$P082, plot = FALSE)$counts, hist(female_data2018$P082, plot = FALSE)$counts)
+
+par(mfrow=c(1,2))
+
+hist(male_data2018$P082, main="HS GPA (Female)", 
+     xlab="GPA High School", col="pink", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+
+hist(female_data2018$P082, main="HS GPA (Male)", 
+     xlab="GPA High School", col="lightblue", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+par(mfrow=c(1,1)) 
+
+# Boxplot for spread and outliers
+boxplot(ADM2018$P083, main="Boxplot of gpa high school, score")
+
+boxplot(ADM2018$P082, main="Boxplot of gpa high school")
+
+
+library(ggplot2)
+
+plot2018 <- ggplot(clean_data2018, aes(x = P009, y = P083)) +
+  geom_jitter(alpha = 0.5, width = 0.2, aes(color = P009)) +  
+  geom_boxplot(width = 0.5, outlier.shape = NA, alpha = 0.7, aes(fill = P009),
+               color = "gray") +  
+  stat_summary(fun.y = median, geom = "point", shape = 23, size = 3, 
+               fill = "yellow", aes(group = P009)) +  
+  labs(title = "Scatter Plot of Scores by Gender with Boxplot 2018", 
+       x = "Gender", y = "Score") +
+  theme_minimal() +
+  scale_color_manual(values = c("lightblue","pink")) + 
+  scale_fill_manual(values = c("gray","beige" ))  
+
+print(plot2018)
+
+
+
+```
+## 2019
+```{r warning=F, message=FALSE,, echo=F }
+setwd("/Users/renxiaojia/Desktop/PSU-PAES")
+library(readr)
+ADM2019 <- read_delim("ADM2019.csv", delim = ";", 
+    escape_double = FALSE, trim_ws = TRUE)
+
+#Renaming gender
+ADM2019$P009 <- factor(ADM2019$P009, levels = c(1, 2), 
+                       labels = c("Male", "Female"))
+
+clean_data2019 <- ADM2019[!is.na(ADM2019$P009), ]
+
+# gpa high school, score, by gender//descriptive statistics
+summary_by_gender_P083 <- tapply(ADM2019$P083, ADM2019$P009, summary)
+summary_by_gender_P083
+
+# gpa high school, by gender//descriptive statistics
+summary_by_gender_P082 <- tapply(ADM2019$P082, ADM2019$P009, summary)
+summary_by_gender_P082
+
+# Histograms by gender
+## histogram of high school GPA score by gender
+clean_data2019$P083 <- as.numeric(clean_data2019$P083)
+clean_data2019 <- clean_data2019[!is.na(clean_data2019$P083), ]
+
+male_data2019 <- subset(clean_data2019, P009 == "Male")
+female_data2019 <- subset(clean_data2019, P009 == "Female")
+
+xlim_range <- range(clean_data2019$P083, na.rm = TRUE)
+ylim_range <- range(0, hist(male_data2019$P083, plot = FALSE)$counts, hist(female_data2019$P083, plot = FALSE)$counts)
+
+par(mfrow=c(1,2))
+
+hist(male_data2019$P083, main="HS GPA score(Male)", 
+     xlab="GPA High School score", col="lightblue", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+
+hist(female_data2019$P083, main="HS GPA score(Female)", 
+     xlab="GPA High School score", col="pink", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+par(mfrow=c(1,1)) 
+
+##histogram of gpa high school by gender
+
+
+clean_data2019$P082 <- as.numeric(clean_data2019$P082)
+clean_data2019 <- clean_data2019[!is.na(clean_data2019$P082), ]
+
+
+xlim_range <- range(clean_data2019$P082, na.rm = TRUE)
+ylim_range <- range(0, hist(male_data2019$P082, plot = FALSE)$counts, hist(female_data2019$P082, plot = FALSE)$counts)
+
+par(mfrow=c(1,2))
+
+hist(male_data2019$P082, main="HS GPA (Female)", 
+     xlab="GPA High School", col="pink", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+
+hist(female_data2019$P082, main="HS GPA (Male)", 
+     xlab="GPA High School", col="lightblue", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+par(mfrow=c(1,1)) 
+
+# Boxplot for spread and outliers
+boxplot(ADM2019$P083, main="Boxplot of gpa high school, score")
+
+boxplot(ADM2019$P082, main="Boxplot of gpa high school")
+
+
+library(ggplot2)
+
+plot2019 <- ggplot(clean_data2019, aes(x = P009, y = P083)) +
+  geom_jitter(alpha = 0.5, width = 0.2, aes(color = P009)) +  
+  geom_boxplot(width = 0.5, outlier.shape = NA, alpha = 0.7, aes(fill = P009),
+               color = "gray") +  
+  stat_summary(fun.y = median, geom = "point", shape = 23, size = 3, 
+               fill = "yellow", aes(group = P009)) +  
+  labs(title = "Scatter Plot of Scores by Gender with Boxplot 2019", 
+       x = "Gender", y = "Score") +
+  theme_minimal() +
+  scale_color_manual(values = c("lightblue","pink")) + 
+  scale_fill_manual(values = c("gray","beige" ))  
+
+print(plot2019)
+
+
+
+```
+## 2020
+```{r warning=F, message=FALSE, , echo=F}
+setwd("/Users/renxiaojia/Desktop/PSU-PAES")
+library(readr)
+ADM2020 <- read_delim("ADM2020.csv", delim = ";", 
+    escape_double = FALSE, trim_ws = TRUE)
+
+#Renaming gender
+ADM2020$P009 <- factor(ADM2020$P009, levels = c(1, 2), 
+                       labels = c("Male", "Female"))
+
+clean_data2020 <- ADM2020[!is.na(ADM2020$P009), ]
+
+# gpa high school, score, by gender//descriptive statistics
+summary_by_gender_P083 <- tapply(ADM2020$P083, ADM2020$P009, summary)
+summary_by_gender_P083
+
+# gpa high school, by gender//descriptive statistics
+summary_by_gender_P082 <- tapply(ADM2020$P082, ADM2020$P009, summary)
+summary_by_gender_P082
+
+# Histograms by gender
+## histogram of high school GPA score by gender
+clean_data2020$P083 <- as.numeric(clean_data2020$P083)
+clean_data2020 <- clean_data2020[!is.na(clean_data2020$P083), ]
+
+male_data2020 <- subset(clean_data2020, P009 == "Male")
+female_data2020 <- subset(clean_data2020, P009 == "Female")
+
+xlim_range <- range(clean_data2020$P083, na.rm = TRUE)
+ylim_range <- range(0, hist(male_data2020$P083, plot = FALSE)$counts, hist(female_data2020$P083, plot = FALSE)$counts)
+
+par(mfrow=c(1,2))
+
+hist(male_data2020$P083, main="HS GPA score(Male)", 
+     xlab="GPA High School score", col="lightblue", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+
+hist(female_data2020$P083, main="HS GPA score(Female)", 
+     xlab="GPA High School score", col="pink", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+par(mfrow=c(1,1)) 
+
+##histogram of gpa high school by gender
+
+
+clean_data2020$P082 <- as.numeric(clean_data2020$P082)
+clean_data2020 <- clean_data2020[!is.na(clean_data2020$P082), ]
+
+
+xlim_range <- range(clean_data2020$P082, na.rm = TRUE)
+ylim_range <- range(0, hist(male_data2020$P082, plot = FALSE)$counts, hist(female_data2020$P082, plot = FALSE)$counts)
+
+par(mfrow=c(1,2))
+
+hist(male_data2020$P082, main="HS GPA (Female)", 
+     xlab="GPA High School", col="pink", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+
+hist(female_data2020$P082, main="HS GPA (Male)", 
+     xlab="GPA High School", col="lightblue", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+par(mfrow=c(1,1)) 
+
+# Boxplot for spread and outliers
+boxplot(ADM2020$P083, main="Boxplot of gpa high school, score")
+
+boxplot(ADM2020$P082, main="Boxplot of gpa high school")
+
+
+library(ggplot2)
+
+plot2020 <- ggplot(clean_data2020, aes(x = P009, y = P083)) +
+  geom_jitter(alpha = 0.5, width = 0.2, aes(color = P009)) +  
+  geom_boxplot(width = 0.5, outlier.shape = NA, alpha = 0.7, aes(fill = P009),
+               color = "gray") +  
+  stat_summary(fun.y = median, geom = "point", shape = 23, size = 3, 
+               fill = "yellow", aes(group = P009)) +  
+  labs(title = "Scatter Plot of Scores by Gender with Boxplot 2020", 
+       x = "Gender", y = "Score") +
+  theme_minimal() +
+  scale_color_manual(values = c("lightblue","pink")) + 
+  scale_fill_manual(values = c("gray","beige" ))  
+
+print(plot2020)
+
+
+
+```
+## 2021
+```{r warning=F, message=FALSE, echo=F}
+setwd("/Users/renxiaojia/Desktop/PSU-PAES")
+library(readr)
+ADM2021 <- read_delim("ADM2021.csv", delim = ";", 
+    escape_double = FALSE, trim_ws = TRUE)
+
+#Renaming gender
+ADM2021$P009 <- factor(ADM2021$P009, levels = c(1, 2), 
+                       labels = c("Male", "Female"))
+
+clean_data2021 <- ADM2021[!is.na(ADM2021$P009), ]
+
+# gpa high school, score, by gender//descriptive statistics
+summary_by_gender_P083 <- tapply(ADM2021$P083, ADM2021$P009, summary)
+summary_by_gender_P083
+
+# gpa high school, by gender//descriptive statistics
+summary_by_gender_P082 <- tapply(ADM2021$P082, ADM2021$P009, summary)
+summary_by_gender_P082
+
+# Histograms by gender
+## histogram of high school GPA score by gender
+clean_data2021$P083 <- as.numeric(clean_data2021$P083)
+clean_data2021 <- clean_data2021[!is.na(clean_data2021$P083), ]
+
+male_data2021 <- subset(clean_data2021, P009 == "Male")
+female_data2021 <- subset(clean_data2021, P009 == "Female")
+
+xlim_range <- range(clean_data2021$P083, na.rm = TRUE)
+ylim_range <- range(0, hist(male_data2021$P083, plot = FALSE)$counts, hist(female_data2021$P083, plot = FALSE)$counts)
+
+par(mfrow=c(1,2))
+
+hist(male_data2021$P083, main="HS GPA score(Male)", 
+     xlab="GPA High School score", col="lightblue", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+
+hist(female_data2021$P083, main="HS GPA score(Female)", 
+     xlab="GPA High School score", col="pink", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+par(mfrow=c(1,1)) 
+
+##histogram of gpa high school by gender
+
+
+clean_data2021$P082 <- as.numeric(clean_data2021$P082)
+clean_data2021 <- clean_data2021[!is.na(clean_data2021$P082), ]
+
+
+xlim_range <- range(clean_data2021$P082, na.rm = TRUE)
+ylim_range <- range(0, hist(male_data2021$P082, plot = FALSE)$counts, hist(female_data2021$P082, plot = FALSE)$counts)
+
+par(mfrow=c(1,2))
+
+hist(male_data2021$P082, main="HS GPA (Female)", 
+     xlab="GPA High School", col="pink", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+
+hist(female_data2021$P082, main="HS GPA (Male)", 
+     xlab="GPA High School", col="lightblue", xlim=xlim_range,
+     ylim=ylim_range, breaks=20)
+
+par(mfrow=c(1,1)) 
+
+# Boxplot for spread and outliers
+boxplot(ADM2021$P083, main="Boxplot of gpa high school, score")
+
+boxplot(ADM2021$P082, main="Boxplot of gpa high school")
+
+
+library(ggplot2)
+
+plot2021 <- ggplot(clean_data2021, aes(x = P009, y = P083)) +
+  geom_jitter(alpha = 0.5, width = 0.2, aes(color = P009)) +  
+  geom_boxplot(width = 0.5, outlier.shape = NA, alpha = 0.7, aes(fill = P009),
+               color = "gray") +  
+  stat_summary(fun.y = median, geom = "point", shape = 23, size = 3, 
+               fill = "yellow", aes(group = P009)) +  
+  labs(title = "Scatter Plot of Scores by Gender with Boxplot 2021", 
+       x = "Gender", y = "Score") +
+  theme_minimal() +
+  scale_color_manual(values = c("lightblue","pink")) + 
+  scale_fill_manual(values = c("gray","beige" ))  
+
+print(plot2021)
+
+
+
+```
+## 2022
+```{r warning=F, message=FALSE, echo=F}
+setwd("/Users/renxiaojia/Desktop/PSU-PAES")
+library(readr)
+ADM2022 <- read_delim("ADM2022.csv", delim = ";", 
+    escape_double = FALSE, trim_ws = TRUE)
+
+#Renaming gender
+ADM2022$P009 <- factor(ADM2022$P009, levels = c(1, 2), 
+                       labels = c("Male", "Female"))
+
+clean_data2022 <- ADM2022[!is.na(ADM2022$P009), ]
+
+# gpa high school, score, by gender//descriptive statistics
+summary_by_gender_P083 <- tapply(ADM2022$P083, ADM2022$P009, summary)
+summary_by_gender_P083
+
+# gpa high school, by gender//descriptive statistics
+summary_by_gender_P082 <- tapply(ADM2022$P082, ADM2022$P009, summary)
+summary_by_gender_P082
+
+# Histograms by gender
+## histogram of high school GPA score by gender
+clean_data2022$P083 <- as.numeric(clean_data2022$P083)
+clean_data2022 <- clean_data2022[!is.na(clean_data2022$P083), ]
+
+male_data2022 <- subset(clean_data2022, P009 == "Male")
+female_data2022 <- subset(clean_data2022, P009 == "Female")
+
+xlim_range <- range(clean_data2022$P083, na.rm = TRUE)
+ylim_range <- range(0, hist(male_data2022$P083, plot = FALSE)$counts, hist(female_data2022$P083, plot = FALSE)$counts)
+
+par(mfrow=c(1,2))
+
+hist(male_data2022$P083, main="HS GPA score(Male)", 
+     xlab="GPA High School score", col="lightblue", xlim=xlim_range,
+     ylim=ylim_range, breaks=20)
+
+
+hist(female_data2022$P083, main="HS GPA score(Female)", 
+     xlab="GPA High School score", col="pink", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+par(mfrow=c(1,1)) 
+
+##histogram of gpa high school by gender
+
+
+clean_data2022$P082 <- as.numeric(clean_data2022$P082)
+clean_data2022 <- clean_data2022[!is.na(clean_data2022$P082), ]
+
+
+xlim_range <- range(clean_data2022$P082, na.rm = TRUE)
+ylim_range <- range(0, hist(male_data2022$P082, plot = FALSE)$counts, hist(female_data2022$P082, plot = FALSE)$counts)
+
+par(mfrow=c(1,2))
+
+hist(male_data2022$P082, main="HS GPA (Female)", 
+     xlab="GPA High School", col="pink", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+
+hist(female_data2022$P082, main="HS GPA (Male)", 
+     xlab="GPA High School", col="lightblue", xlim=xlim_range,
+     ylim=ylim_range, breaks=20)
+
+par(mfrow=c(1,1)) 
+
+# Boxplot for spread and outliers
+boxplot(ADM2022$P083, main="Boxplot of gpa high school, score")
+
+boxplot(ADM2022$P082, main="Boxplot of gpa high school")
+
+
+library(ggplot2)
+
+plot2022 <- ggplot(clean_data2022, aes(x = P009, y = P083)) +
+  geom_jitter(alpha = 0.5, width = 0.2, aes(color = P009)) +  
+  geom_boxplot(width = 0.5, outlier.shape = NA, alpha = 0.7, aes(fill = P009),
+               color = "gray") +  
+  stat_summary(fun.y = median, geom = "point", shape = 23, size = 3, 
+               fill = "yellow", aes(group = P009)) +  
+  labs(title = "Scatter Plot of Scores by Gender with Boxplot 2022", 
+       x = "Gender", y = "Score") +
+  theme_minimal() +
+  scale_color_manual(values = c("lightblue","pink")) + 
+  scale_fill_manual(values = c("gray","beige" ))  
+
+print(plot2022)
+
+
+
+```
+## 2023
+```{r warning=F, message=FALSE , echo=F}
+Sys.setenv(R_MAX_VSIZE = 16e9)
+setwd("/Users/renxiaojia/Desktop/PSU-PAES")
+library(readr)
+ADM2023 <- read_delim("ADM2023.csv", delim = ";", 
+    escape_double = FALSE, trim_ws = TRUE)
+
+#Renaming gender
+ADM2023$P009 <- factor(ADM2023$P009, levels = c(1, 2), 
+                       labels = c("Male", "Female"))
+
+clean_data2023 <- ADM2023[!is.na(ADM2023$P009), ]
+
+# gpa high school, score, by gender//descriptive statistics
+summary_by_gender_P083 <- tapply(ADM2023$P083, ADM2023$P009, summary)
+summary_by_gender_P083
+
+# gpa high school, by gender//descriptive statistics
+summary_by_gender_P082 <- tapply(ADM2023$P082, ADM2023$P009, summary)
+summary_by_gender_P082
+
+# Histograms by gender
+## histogram of high school GPA score by gender
+clean_data2023$P083 <- as.numeric(clean_data2023$P083)
+clean_data2023 <- clean_data2023[!is.na(clean_data2023$P083), ]
+
+male_data2023 <- subset(clean_data2023, P009 == "Male")
+female_data2023 <- subset(clean_data2023, P009 == "Female")
+
+xlim_range <- range(clean_data2023$P083, na.rm = TRUE)
+ylim_range <- range(0, hist(male_data2023$P083, plot = FALSE)$counts, hist(female_data2023$P083, plot = FALSE)$counts)
+
+par(mfrow=c(1,2))
+
+hist(male_data2023$P083, main="HS GPA score(Male)", 
+     xlab="GPA High School score", col="lightblue", 
+     xlim=xlim_range, ylim=ylim_range, breaks=20)
+
+
+hist(female_data2023$P083, main="HS GPA score(Female)", 
+     xlab="GPA High School score", col="pink", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+par(mfrow=c(1,1)) 
+
+##histogram of gpa high school by gender
+
+
+clean_data2023$P082 <- as.numeric(clean_data2023$P082)
+clean_data2023 <- clean_data2023[!is.na(clean_data2023$P082), ]
+
+
+xlim_range <- range(clean_data2023$P082, na.rm = TRUE)
+ylim_range <- range(0, hist(male_data2023$P082, plot = FALSE)$counts, hist(female_data2023$P082, plot = FALSE)$counts)
+
+par(mfrow=c(1,2))
+
+hist(male_data2023$P082, main="HS GPA (Female)", 
+     xlab="GPA High School", col="pink", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+
+hist(female_data2023$P082, main="HS GPA (Male)", 
+     xlab="GPA High School", col="lightblue", xlim=xlim_range, 
+     ylim=ylim_range, breaks=20)
+
+par(mfrow=c(1,1)) 
+
+# Boxplot for spread and outliers
+boxplot(ADM2023$P083, main="Boxplot of gpa high school, score")
+
+boxplot(ADM2023$P082, main="Boxplot of gpa high school")
+
+
+library(ggplot2)
+
+plot2023 <- ggplot(clean_data2023, aes(x = P009, y = P083)) +
+  geom_jitter(alpha = 0.5, width = 0.2, aes(color = P009)) +  
+  geom_boxplot(width = 0.5, outlier.shape = NA, alpha = 0.7, aes(fill = P009),
+               color = "gray") +  
+  stat_summary(fun.y = median, geom = "point", shape = 23, size = 3, 
+               fill = "yellow", aes(group = P009)) +  
+  labs(title = "Scatter Plot of Scores by Gender with Boxplot 2023", 
+       x = "Gender", y = "Score") +
+  theme_minimal() +
+  scale_color_manual(values = c("lightblue","pink")) + 
+  scale_fill_manual(values = c("gray","beige" ))  
+
+print(plot2023)
+
+
+
+```
+
+
+## before and post policy change --- differences in mean
+```{r message=F, echo=F}
+library(dplyr)
+
+# Combine all datasets into one
+
+clean_data2013 <- clean_data2013 %>% mutate(P165 = as.character(P165))
+clean_data2014 <- clean_data2014 %>% mutate(P165 = as.character(P165))
+clean_data2015 <- clean_data2015 %>% mutate(P165 = as.character(P165))
+clean_data2016 <- clean_data2016 %>% mutate(P165 = as.character(P165))
+clean_data2017 <- clean_data2017 %>% mutate(P165 = as.character(P165))
+
+
+
+clean_data2013 <- clean_data2013 %>% mutate(P160 = as.numeric(P160))
+clean_data2014 <- clean_data2014 %>% mutate(P160 = as.numeric(P160))
+clean_data2015 <- clean_data2015 %>% mutate(P160 = as.numeric(P160))
+clean_data2016 <- clean_data2016 %>% mutate(P160 = as.numeric(P160))
+clean_data2017 <- clean_data2017 %>% mutate(P160 = as.numeric(P160))
+
+
+clean_data2013 <- clean_data2013 %>% rename(Year = P004)
+clean_data2014 <- clean_data2014 %>% rename(Year = P004)
+clean_data2015 <- clean_data2015 %>% rename(Year = P004)
+clean_data2016 <- clean_data2016 %>% rename(Year = P004)
+clean_data2017 <- clean_data2017 %>% rename(Year = P004)
+
+
+
+data_combined <- bind_rows(clean_data2013, clean_data2014, 
+                           clean_data2015, clean_data2016, clean_data2017)
+
+
+##creating variable for post change
+data_combined <- data_combined %>%
+  mutate(PolicyPeriod = ifelse(Year >= 2015, "After", "Before"))
+
+
+# Calculate the mean score by gender and Policy Period
+mean_scores_by_gender_policy_period <- data_combined %>%
+  group_by(PolicyPeriod, P009) %>%
+  summarise(mean_score = mean(P083, na.rm = TRUE))
+
+print(mean_scores_by_gender_policy_period)
+
+# Plot the average scores by policy period and gender
+ggplot(mean_scores_by_gender_policy_period, aes(x = PolicyPeriod,
+                                                y = mean_score, fill = P009)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Average Scores by Gender Before and After Policy Change",
+       x = "Policy Period", y = "Average Score") +
+  theme_minimal() +
+  scale_fill_manual(values = c("lightblue", "pink"))
+
+# Perform a t-test to compare scores before and after the policy change
+t_test_results <- t.test(P083 ~ PolicyPeriod, data = data_combined)
+print(t_test_results)
+
+# Calculate mean scores for each year
+mean_scores_by_year <- data_combined %>%
+  group_by(Year) %>%
+  summarise(mean_score = mean(P083, na.rm = TRUE))
+
+# Plot the average scores over the years
+ggplot(mean_scores_by_year, aes(x = Year, y = mean_score)) +
+  geom_line() +
+  geom_point() +
+  labs(title = "Average Scores Over Time (2013-2023)",
+       x = "Year", y = "Average Score") +
+  theme_minimal()
+
+#make table
+library(pander)
+
+data <- data.frame(
+  PolicyPeriod = c("Before", "After", "Before", "After"),
+  Gender = c("Male", "Male", "Female", "Female"),
+  Score = c(523.2161, 525.7100, 546.4404, 551.6863)
+)
+
+pander(data, style = 'rmarkdown', caption = "Mean Scores by Policy Period and
+       Gender")
+
+
+
+```
+
+The t-test strongly suggests that the policy change had a positive impact on average test scores, with a statistically significant increase in scores after the policy was implemented.
+
+*Female students has a higher increase in scores.*
+
+## replicating main regression for the first regression table
+```{r message=F, echo=F}
+# Filter data for the years 2013 to 2017 and clean the data
+
+analysis_data <- data_combined %>%
+  filter(Year >= 2013 & Year <= 2017)
+
+analysis_data <- analysis_data %>%
+  mutate(
+    Gender = factor(P009, levels = c("Male", "Female")),
+    PolicyPeriod = factor(PolicyPeriod, levels = c("Before", "After"))
+  )
+
+
+### question skipped model (TBD)
+
+#######changes in the gender gap in PSU test scores model
+
+# Standardize test scores within each year and domain
+zero_sd_groups <- analysis_data %>%
+  group_by(Year, P083) %>%
+  summarise(sd_P083 = sd(P083, na.rm = TRUE)) %>%
+  filter(sd_P083 == 0)
+
+print(zero_sd_groups)
+
+analysis_data <- analysis_data %>%
+  group_by(Year, P083) %>%
+  mutate(
+    ZScore = ifelse(sd(P083, na.rm = TRUE) == 0, 0,
+                    (P083 - mean(P083, na.rm = TRUE)) / sd(P083, na.rm = TRUE))
+  ) %>%
+  ungroup()
+
+analysis_data <- analysis_data %>% filter(!is.na(P083))
+
+analysis_data <- analysis_data %>%
+  group_by(Year) %>%
+  mutate(ZScore = (P083 - mean(P083, na.rm = TRUE)) / sd(P083, na.rm = TRUE)) %>%
+  ungroup()
+##model1
+model1 <- lm(ZScore ~ Gender + PolicyPeriod + PolicyPeriod*Gender, 
+             data = analysis_data)
+summary(model1)
+
+
+# Model with controls for every other variable in the dataset
+library(dplyr)
+
+analysis_data_new <- analysis_data %>%
+  mutate(
+    Gender = factor(P009, levels = c("Male", "Female")),
+    PolicyPeriod = factor(PolicyPeriod, levels = c("Before", "After"))
+  )
+
+numeric_columns <- analysis_data_new %>%
+  select(where(is.numeric), -ZScore, -Gender, -PolicyPeriod)
+
+analysis_data_new$CompositeControl <- rowSums(numeric_columns, na.rm = TRUE)
+
+# Run the regression model
+model_with_composite_control <- lm(ZScore ~ Gender + PolicyPeriod 
+                                   + Gender*PolicyPeriod + CompositeControl, analysis_data_new)
+
+summary(model_with_composite_control)
+
+```
+*lacking data for question skipped in exam*
+Without control groups:
+
+Coefficients:
+
+1. **(Intercept): -0.110958**
+   - This is the estimated average Z-score for male test-takers during the period before the policy change. The negative value indicates that, on average, male test-takers had a slightly lower Z-score than the overall mean before the policy change.
+
+2. **GenderFemale: 0.210335**
+   - This coefficient represents the difference in Z-scores between female and male test-takers before the policy change. Specifically, female test-takers scored on average 0.210335 standard deviations higher than male test-takers during the pre-policy period. The positive and significant value suggests that females had higher test scores than males before the policy change.
+
+3. **PolicyPeriodAfter: -0.016348**
+   - This coefficient represents the difference in Z-scores for male test-takers between the periods before and after the policy change. The negative value indicates that, on average, male test-takers had slightly lower Z-scores after the policy change compared to before, though the effect is relatively small.
+
+4. **GenderFemale:PolicyPeriodAfter: 0.030116**
+   - This interaction term represents the difference in the gender gap in Z-scores before and after the policy change. A positive value of 0.030116 means that the gender gap increased slightly in favor of females after the policy change. This suggests that the policy change had a slightly more positive effect on female test-takers than on male test-takers.
+
+*Significance of the Coefficients*:
+
+- All the coefficients have a `Pr(>|t|)` value (p-value) of less than 0.001 (represented as `< 2e-16`), indicating that these effects are statistically significant at the 0.1% level.
+
+*Interpretation*:
+
+- **Gender**: Before the policy change, females scored higher than males on average.
+- **PolicyPeriod**: The policy change had a small but statistically significant negative impact on male scores.
+- **Interaction (GenderFemale:PolicyPeriodAfter)**: After the policy change, the advantage of females in test scores increased slightly.
+
+*Conclusion*:
+
+The policy change appears to have had a small but statistically significant impact on test scores, slightly benefiting female test-takers more than male test-takers. This could suggest that the policy change (removing penalties for wrong answers) might have been more beneficial to females, perhaps by reducing test anxiety or other factors that previously caused them to perform slightly worse than they might have otherwise.
+
+With Control Group:
+
+Looking at the R^2, with everything controlled in the model does seem to increase the fit of the model. 
+
+*Coefficients*:
+- **(Intercept):** -0.2469 (p < 2e-16) - The intercept represents the expected value of Zscore when all other variables are at their reference levels (i.e., when Gender is "Male", PolicyPeriod is "Before", and CompositeControl is at its baseline). The negative value suggests that, on average, the baseline group has a negative Zscore.
+  
+- **GenderFemale:** 0.2074 (p < 2e-16) - This coefficient represents the difference in ZScore between females and males, holding all other variables constant. Since it’s positive, it indicates that females have a higher ZScore on average compared to males, with a significant difference.
+
+- **PolicyPeriodAfter:** -0.0337 (p < 2e-16) - This coefficient represents the change in ZScore after the policy period compared to before, holding other factors constant. The negative value suggests that the ZScore is lower on average in the "After" period compared to the "Before" period, and this difference is statistically significant.
+
+- **CompositeControl:** 8.264e-07 (p < 2e-16) - This coefficient is very small but highly significant. It represents the effect of the combined control variables (those summed into CompositeControl) on the ZScore. Despite the small magnitude, the high significance indicates that these controls have an effect on ZScore.
+
+- **GenderFemale:PolicyPeriodAfter:** 0.0153 (p = 1.4e-05) - This interaction term indicates how the effect of being female on ZScore changes after the policy period. The positive coefficient suggests that the gender difference in ZScore (females versus males) is slightly larger in the "After" period compared to the "Before" period. This difference is statistically significant.
+
+*Interpretation*:
+- **Gender Effect:** Females have higher ZScore than males, and this effect is consistent and significant.
+- **Policy Effect:** The ZScore decreases after the policy change compared to before, indicating the policy may have had a negative impact on ZScore.
+- **Interaction Effect:** The effect of gender on ZScore is even more pronounced after the policy change, suggesting that the policy might have differentially impacted males and females, increasing the score difference between them.
+- **Control Variables:** The CompositeControl variable, although very small in magnitude, is statistically significant, indicating that the combined effect of all control variables does play a role in the variation of ZScore.
+
+This analysis suggests a complex interaction between gender and policy period, with controls playing a modest but significant role in explaining ZScore.
+
+## possible time series analysis 
+```{r message=F, echo=F}
+#without control groups
+library(forecast)
+before_policy <- analysis_data %>% filter(PolicyPeriod == "Before")
+after_policy <- analysis_data %>% filter(PolicyPeriod == "After")
+
+ts_before <- ts(before_policy$ZScore, start = min(before_policy$Year), end = max(before_policy$Year), frequency = 1)
+
+ts_after <- ts(after_policy$ZScore, start = min(after_policy$Year), end = max(after_policy$Year), frequency = 1)
+
+
+
+exog_before <- model.matrix(~ Gender + Gender:PolicyPeriod, 
+                            data = before_policy)
+
+
+exog_after <- model.matrix(~ Gender + Gender:PolicyPeriod, data = after_policy)
+
+
+exog_before <- exog_before[1:length(ts_before), ]
+exog_after <- exog_after[1:length(ts_after), ]
+
+
+```
+*I dont think this is suitable for time analysis series*
+
+
+## interaction with socioeconomic variables-income
+```{r message=F,warning=F, echo=F,result='hide'}
+#with label variable p034 "family gross income" without controls 
+model2 <- lm(ZScore ~ Gender + PolicyPeriod + PolicyPeriod*Gender+
+               as.factor(P034)+as.factor(P034)*PolicyPeriod, 
+             data = analysis_data)
+summary(model2)
+
+##with controls
+model3 <- lm(ZScore ~ Gender + PolicyPeriod + PolicyPeriod*Gender
+             +as.factor(P034)+as.factor(P034)*PolicyPeriod 
+             + P022 + as.factor(P037), data = analysis_data_new)
+summary(model3)
+
+
+
+library(pander)
+regression_results <- summary(model3)$coefficients
+results_table <- data.frame(
+  Estimate = regression_results[, "Estimate"],
+  `P-value` = regression_results[, "Pr(>|t|)"]
+)
+pander(results_table, caption = "Regression Results with Family Gross Income")
+
+
+```
+Without control:
+Conclusion:
+Gender: Females generally have higher ZScores than males.
+Income Levels (P034): Higher family income is associated with higher ZScores. The effect is incremental, with each successive income bracket generally showing a positive increase in ZScore compared to the lowest income bracket.
+Policy Period: The policy period alone does not have a significant direct effect on ZScore. However, when considering interactions with Gender and Income Levels, the policy does seem to impact ZScore differently across these groups.
+Interaction Effects:
+The positive interaction between Gender and PolicyPeriod suggests that females benefited more from the policy change compared to males.
+The interaction between Income Level and PolicyPeriod shows that the impact of the policy was not uniform across income levels, with some income levels experiencing a decrease in ZScore post-policy.
+
+With Control:
+Gender: Females generally have higher ZScores than males.
+Income Levels (P034): Higher family income is associated with higher ZScores. This relationship is generally strong and positive across income levels, particularly at the highest income levels.
+Policy Period: The policy period itself has a small negative effect on ZScore. The interaction between policy period and gender indicates that females benefited slightly more from the policy change compared to males.
+Interaction Effects: The interaction between policy period and income levels indicates that the policy's impact varied across income levels, with some higher-income levels seeing less favorable outcomes post-policy implementation.
+CompositeControl: The aggregate of other numeric controls has a small but significant positive effect on ZScore, showing that controlling for these variables does improve the model's explanatory power.
+Overall, the model suggests that while gender and income levels play significant roles in determining ZScore, the policy change had a differential impact depending on these factors, particularly with varying effects across different income levels. The inclusion of CompositeControl enhances the model's explanatory power, accounting for additional variance in the outcome.
+
+## interaction with working status
+```{r message=F,warning=F, echo=F, result='hide'}
+## with working status
+## label variable p022 "hours worked"
+## with controls
+model4 <- lm(ZScore ~ Gender + PolicyPeriod + PolicyPeriod*Gender+P022+
+               P022*PolicyPeriod+as.factor(P034)+as.factor(P037),
+             data = analysis_data)
+summary(model4)
+
+library(pander)
+regression_results <- summary(model4)$coefficients
+results_table <- data.frame(
+  Estimate = regression_results[, "Estimate"],
+  `P-value` = regression_results[, "Pr(>|t|)"]
+)
+pander(results_table, caption = "Regression Results with Hours Worked")
+
+```
+Conclusion:
+Gender Effect: Females tend to have higher ZScores than males, with a consistent positive effect across all conditions.
+Policy Effect: The policy period is associated with a slight decrease in ZScore, but this effect is more nuanced when considering interactions with gender and hours worked.
+Working Hours: More hours worked is generally associated with a lower ZScore, and this effect becomes stronger after the policy change.
+Interaction Effects: The interaction between Gender and PolicyPeriod indicates that females may have slightly benefited from the policy change relative to males. Additionally, the interaction between PolicyPeriod and hours worked suggests that the negative impact of hours worked on ZScore is more significant after the policy change.
+This model suggests that while Gender, PolicyPeriod, and working hours all play significant roles in determining ZScore, their effects are interrelated, particularly when considering the policy change's impact.
+
+
+## interaction with family status
+
+```{r message=F,  echo=F}
+# P037 father education
+model5 <- lm(ZScore ~ Gender + PolicyPeriod + PolicyPeriod*Gender+
+               as.factor(P037)
+             +as.factor(P037)*PolicyPeriod+as.factor(P034)+P022, 
+             data = analysis_data)
+summary(model5)
+
+```
+
+
+
